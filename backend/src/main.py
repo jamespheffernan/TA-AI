@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
+from .db import engine, Base
 
 # Load environment variables
 load_dotenv()
@@ -29,6 +30,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def on_startup():
+    # Import models to register metadata
+    import src.models.models  # noqa: F401
+    # Create database tables
+    print("[Startup] Creating database tables...")
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/api/health")
 async def health_check():
