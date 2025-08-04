@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import axios from 'axios';
 import CourseManagement from '@/components/CourseManagement';
 import AccessControls from '@/components/AccessControls';
 import HealthDashboard from '@/components/HealthDashboard';
