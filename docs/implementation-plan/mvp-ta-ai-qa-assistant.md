@@ -172,45 +172,13 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- [ ] Task 5.3: Admin Controls
+- (no pending tasks)
 
 ### In Progress
-- [ ] Task 5.3: Admin Controls
+- (no tasks in progress)
 
 ### Completed
-- [x] Task 1.1: Repository Setup ✅
-  - Initialized Git repository with comprehensive .gitignore
-  - Set up Next.js 14 frontend with TypeScript and Tailwind CSS  
-  - Configured Python backend with Azure Functions support
-  - Added linting and formatting (ESLint, Prettier, Black)
-  - Created project directory structure
-  - Made initial commit and created feature branch
-- [x] Task 1.2: Azure Landing Zone ✅
-  - All Terraform modules scaffolded (RG, VNet, Postgres, OpenAI, Storage, Static Web App, Functions)
-  - Dev environment config with placeholders
-  - Infrastructure README with setup instructions
-- [x] Task 1.3: Authentication Framework ✅  
-  - NextAuth.js with Azure AD OIDC provider configured
-  - Authentication middleware protecting app/API routes
-  - Environment variables and setup documentation
-- [x] Task 1.4: Backend API Scaffold ✅
-  - Created minimal FastAPI app with health check endpoint
-  - Local development server script (run_local.py)
-  - Successfully running on port 7071
-  - Documented grpcio workaround for macOS ARM
-- [x] Task 2.1: Database Schema & Models ✅
-  - Configured SQLAlchemy engine and session
-  - Defined ORM models for Course, Chunk, User, QuestionLog, Feedback
-  - Auto-create tables on startup with metadata.create_all
-- [x] Task 2.2: Document Processing Service ✅
-- [x] Task 2.3: Ingestion Function ✅
-- [x] Task 3.1: Embedding Service ✅
-- [x] Task 3.2: GPT-4 Integration ✅
-- [x] Task 3.3: Query API Function ✅
-- [x] Task 4.2: Student Portal ✅
-- [x] Task 4.3: Upload Interface ✅
-- [x] Task 5.1: Review Interface ✅
-- [x] Task 5.2: Analytics Views ✅
+  - [x] Task 5.3: Admin Controls ✅
 
 ### Blocked
 _None yet_
