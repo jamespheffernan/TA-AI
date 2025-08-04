@@ -20,6 +20,7 @@ resource "azurerm_linux_function_app" "this" {
   storage_account_name       = var.storage_account_name
   storage_account_access_key = "placeholder-access-key"
   virtual_network_subnet_id  = var.vnet_subnet_id
+  https_only                 = true
   site_config {
     application_stack {
       python_version = "3.11"
