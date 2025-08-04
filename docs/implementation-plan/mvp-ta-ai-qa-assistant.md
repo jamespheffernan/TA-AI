@@ -175,7 +175,7 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 - (no pending tasks)
 
 ### In Progress
-- [ ] Task 4.3: Upload Interface
+- (no tasks in progress)
 
 ### Completed
 - [x] Task 1.1: Repository Setup ✅
@@ -208,6 +208,7 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 - [x] Task 3.2: GPT-4 Integration ✅
 - [x] Task 3.3: Query API Function ✅
 - [x] Task 4.2: Student Portal ✅
+- [x] Task 4.3: Upload Interface ✅
 
 ### Blocked
 _None yet_
