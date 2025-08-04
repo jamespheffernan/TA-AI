@@ -1,13 +1,36 @@
 "use client";
 import React, { useState } from 'react';
+import axios from 'axios';
 import DragAndDropUploader from '@/components/DragAndDropUploader';
 
 export default function UploadPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(files);
     console.log('Files selected for upload:', files);
+  };
+
+  const uploadFiles = async () => {
+    if (selectedFiles.length === 0) return;
+    const formData = new FormData();
+    selectedFiles.forEach((file) => formData.append('file', file));
+    setUploading(true);
+    setUploadMessage(null);
+    try {
+      const response = await axios.post('/api/ingest', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setUploadMessage('Upload successful');
+      console.log('Ingestion response:', response.data);
+    } catch (err: any) {
+      setUploadMessage('Upload failed: ' + err.message);
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -18,12 +41,14 @@ export default function UploadPage() {
         <div className="mt-4">
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            onClick={() => alert('Upload started (placeholder)')}
+            onClick={uploadFiles}
+            disabled={uploading}
           >
-            Start Upload
+            {uploading ? 'Uploading...' : 'Start Upload'}
           </button>
         </div>
       )}
+      {uploadMessage && <p className="mt-2 text-sm text-gray-700">{uploadMessage}</p>}
     </div>
   );
 }
