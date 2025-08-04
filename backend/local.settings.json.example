@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AZURE_OPENAI_ENDPOINT": "https://your-openai-resource.openai.azure.com/",
+    "AZURE_OPENAI_API_KEY": "your-api-key",
+    "AZURE_OPENAI_API_VERSION": "2023-12-01-preview",
+    "DATABASE_URL": "postgresql://user:password@localhost:5432/ta_ai",
+    "AZURE_CLIENT_ID": "your-client-id",
+    "AZURE_CLIENT_SECRET": "your-client-secret",
+    "AZURE_TENANT_ID": "your-tenant-id"
+  }
+}
