@@ -1,9 +1,10 @@
 import azure.functions as func
 import json
 import os
-from ..services.document_parser import parse_document
-from ..db import SessionLocal
-from ..models.models import Chunk
+from services.validation_service import validate_int, validate_str
+from services.document_parser import parse_document
+from db import SessionLocal
+from models.models import Chunk
 import openai
 import tiktoken
 
@@ -28,13 +29,12 @@ def chunk_text(text: str, max_tokens: int):
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         data = req.get_json()
+        course_id = validate_int(data.get("course_id"), "course_id")
+        file_path = validate_str(data.get("path"), "path")
+    except ValueError as ve:
+        return func.HttpResponse(str(ve), status_code=400)
     except Exception:
         return func.HttpResponse("Invalid JSON body", status_code=400)
-
-    course_id = data.get("course_id")
-    file_path = data.get("path")
-    if not course_id or not file_path:
-        return func.HttpResponse("Missing course_id or path", status_code=400)
 
     try:
         text = parse_document(file_path)

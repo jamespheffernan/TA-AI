@@ -1,6 +1,7 @@
 import azure.functions as func
 import json
 from services.qa_service import generate_answer
+from services.validation_service import validate_int, validate_str
 from db import SessionLocal
 from models.models import QuestionLog
 
@@ -8,13 +9,12 @@ from models.models import QuestionLog
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         data = req.get_json()
+        course_id = validate_int(data.get("course_id"), "course_id")
+        question = validate_str(data.get("question"), "question")
+    except ValueError as ve:
+        return func.HttpResponse(str(ve), status_code=400)
     except Exception:
         return func.HttpResponse("Invalid JSON body", status_code=400)
-
-    course_id = data.get("course_id")
-    question = data.get("question")
-    if course_id is None or not question:
-        return func.HttpResponse("Missing course_id or question", status_code=400)
 
     try:
         result = generate_answer(question, course_id)

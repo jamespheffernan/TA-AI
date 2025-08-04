@@ -41,19 +41,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         elif method == 'POST':
             try:
                 data = req.get_json()
-            except:
-                return func.HttpResponse("Invalid JSON body", status_code=400)
-            log_id = data.get('id')
-            flagged = data.get('flagged')
-            feedback_text = data.get('feedback')
-            if log_id is None or flagged is None:
-                return func.HttpResponse("Missing id or flagged", status_code=400)
+                log_id = validate_int(data.get('id'), 'id')
+                # flagged should be boolean or string
+                flagged_val = data.get('flagged')
+                if not isinstance(flagged_val, (bool, str)):
+                    raise ValueError('flagged must be boolean or string')
+                feedback_text = data.get('feedback', '')
+                feedback_text = validate_str(feedback_text, 'feedback', allow_empty=True)
+            except ValueError as ve:
+                return func.HttpResponse(str(ve), status_code=400)
+            except Exception:
+                return func.HttpResponse('Invalid JSON body', status_code=400)
             fb = session.query(Feedback).filter_by(log_id=log_id).one_or_none()
             if fb:
-                fb.flagged = str(flagged)
+                fb.flagged = str(flagged_val)
                 fb.corrected_answer = feedback_text
             else:
-                fb = Feedback(log_id=log_id, flagged=str(flagged), corrected_answer=feedback_text)
+                fb = Feedback(log_id=log_id, flagged=str(flagged_val), corrected_answer=feedback_text)
                 session.add(fb)
             session.commit()
             return func.HttpResponse(
