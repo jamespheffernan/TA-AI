@@ -1,4 +1,5 @@
 import React from 'react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface AnalyticsOverviewProps {
   data: {
@@ -25,6 +26,17 @@ export default function AnalyticsOverview({ data }: AnalyticsOverviewProps) {
             </li>
           ))}
         </ol>
+      </div>
+      <div className="mt-6">
+        <h3 className="font-medium mb-2">Most Asked Questions Chart</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data.mostAsked}>
+            <XAxis dataKey="question" tick={{ fontSize: 12 }} />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#4F46E5" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
