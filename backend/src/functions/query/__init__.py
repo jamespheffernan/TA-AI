@@ -4,9 +4,15 @@ from services.qa_service import generate_answer
 from services.validation_service import validate_int, validate_str
 from db import SessionLocal
 from models.models import QuestionLog
+import os
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    # Enforce API key authentication
+    secret = os.getenv("API_KEY_SECRET")
+    provided = req.headers.get("x-api-key")
+    if provided != secret:
+        return func.HttpResponse("Unauthorized", status_code=401)
     try:
         data = req.get_json()
         course_id = validate_int(data.get("course_id"), "course_id")

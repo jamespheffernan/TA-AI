@@ -2,9 +2,15 @@ import azure.functions as func
 import json
 from db import SessionLocal
 from models.models import User
+import os
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    # Enforce API key authentication
+    secret = os.getenv("API_KEY_SECRET")
+    provided = req.headers.get("x-api-key")
+    if provided != secret:
+        return func.HttpResponse("Unauthorized", status_code=401)
     session = SessionLocal()
     try:
         if req.method == 'GET':
