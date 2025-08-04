@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import QAReviewTable from '@/components/QAReviewTable';
 
 interface QAReviewItem {
@@ -14,13 +15,15 @@ interface QAReviewItem {
 export default function ReviewPage() {
   const [filterText, setFilterText] = useState('');
   const [showFlaggedOnly, setShowFlaggedOnly] = useState(false);
+  const [items, setItems] = useState<QAReviewItem[]>([]);
 
-  const initialItems: QAReviewItem[] = [
-    { id: 201, question: 'Explain Dijkstra’s algorithm.', answer: 'A shortest-path algorithm...', timestamp: new Date().toISOString(), flagged: false, feedback: '' },
-    { id: 202, question: 'What is polymorphism?', answer: 'The ability to treat objects of different types...', timestamp: new Date().toISOString(), flagged: true, feedback: 'Clarify more examples' },
-  ];
+  useEffect(() => {
+    axios.get('/api/review')
+      .then((res) => setItems(res.data))
+      .catch((err) => console.error('Error fetching review logs:', err));
+  }, []);
 
-  const filteredItems = initialItems.filter((item) =>
+  const filteredItems = items.filter((item) =>
     (item.question.toLowerCase().includes(filterText.toLowerCase()) ||
       item.answer.toLowerCase().includes(filterText.toLowerCase())) &&
     (!showFlaggedOnly || item.flagged)

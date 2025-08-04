@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 interface QAReviewItem {
   id: number;
@@ -16,17 +17,29 @@ interface QAReviewTableProps {
 export default function QAReviewTable({ items }: QAReviewTableProps) {
   const [data, setData] = useState<QAReviewItem[]>(items);
 
-  const toggleFlag = (id: number) => {
-    setData((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, flagged: !item.flagged } : item))
-    );
+  const toggleFlag = async (id: number) => {
+    const item = data.find((i) => i.id === id);
+    if (!item) return;
+    const newFlagged = !item.flagged;
+    try {
+      await axios.post('/api/review', { id, flagged: newFlagged, feedback: item.feedback });
+      setData((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, flagged: newFlagged } : i))
+      );
+    } catch (err) {
+      console.error('Error updating flag:', err);
+    }
   };
 
-  const submitFeedback = (id: number, feedback: string) => {
-    console.log(`Submit feedback for ${id}:`, feedback);
-    setData((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, feedback } : item))
-    );
+  const submitFeedback = async (id: number, feedback: string) => {
+    try {
+      await axios.post('/api/review', { id, flagged: data.find((i) => i.id === id)?.flagged, feedback });
+      setData((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, feedback } : item))
+      );
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+    }
   };
 
   return (
