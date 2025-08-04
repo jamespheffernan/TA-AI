@@ -1,0 +1,66 @@
+import azure.functions as func
+import json
+import os
+from ..services.document_parser import parse_document
+from ..db import SessionLocal
+from ..models.models import Chunk
+import openai
+import tiktoken
+
+# Load OpenAI API key from env
+openai.api_key = os.getenv("AZURE_OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+
+# Configure embedding model
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+# Initialize tokenizer for token counting
+tokenizer = tiktoken.get_encoding("cl100k_base")
+
+# Maximum tokens per chunk
+MAX_TOKENS = int(os.getenv("CHUNK_SIZE", 500))
+
+
+def chunk_text(text: str, max_tokens: int):
+    tokens = tokenizer.encode(text)
+    for i in range(0, len(tokens), max_tokens):
+        yield tokenizer.decode(tokens[i : i + max_tokens])
+
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    try:
+        data = req.get_json()
+    except Exception:
+        return func.HttpResponse("Invalid JSON body", status_code=400)
+
+    course_id = data.get("course_id")
+    file_path = data.get("path")
+    if not course_id or not file_path:
+        return func.HttpResponse("Missing course_id or path", status_code=400)
+
+    try:
+        text = parse_document(file_path)
+    except FileNotFoundError:
+        return func.HttpResponse(f"File not found: {file_path}", status_code=404)
+
+    session = SessionLocal()
+    created = 0
+    try:
+        for chunk in chunk_text(text, MAX_TOKENS):
+            # generate embedding
+            resp = openai.Embedding.create(input=chunk, model=EMBEDDING_MODEL)
+            embedding = resp["data"][0]["embedding"]
+            # persist chunk
+            db_chunk = Chunk(course_id=course_id, text=chunk, embedding=embedding)
+            session.add(db_chunk)
+            created += 1
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        return func.HttpResponse(f"Error during ingestion: {e}", status_code=500)
+    finally:
+        session.close()
+
+    return func.HttpResponse(
+        json.dumps({"course_id": course_id, "chunks_created": created}),
+        mimetype="application/json",
+        status_code=200,
+    )
