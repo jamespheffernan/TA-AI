@@ -172,10 +172,10 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- (no pending tasks)
+- [ ] Task 5.2: Analytics Views
 
 ### In Progress
-- (no tasks in progress)
+- [ ] Task 5.2: Analytics Views
 
 ### Completed
 - [x] Task 1.1: Repository Setup ✅
