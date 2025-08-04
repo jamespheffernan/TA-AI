@@ -172,7 +172,6 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- [ ] Task 1.1: Repository Setup
 - [ ] Task 1.2: Azure Landing Zone  
 - [ ] Task 1.3: Authentication Framework
 - [ ] Task 2.1: Database Schema
@@ -192,17 +191,39 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 - [ ] Task 6.3: Documentation & Handoff
 
 ### In Progress
-_None yet_
+- [x] Task 1.2: Azure Landing Zone (modules scaffolded, ready for parameterization)
+- [x] Task 1.3: Authentication Framework (NextAuth.js with Azure AD OIDC scaffolded, middleware in place)
 
 ### Completed
-_None yet_
+- [x] Task 1.1: Repository Setup ✅
+  - Initialized Git repository with comprehensive .gitignore
+  - Set up Next.js 14 frontend with TypeScript and Tailwind CSS  
+  - Configured Python backend with Azure Functions support
+  - Added linting and formatting (ESLint, Prettier, Black)
+  - Created project directory structure
+  - Made initial commit and created feature branch
 
 ### Blocked
 _None yet_
 
 ## Executor's Feedback or Assistance Requests
 
-_No feedback yet - project in planning phase_
+### Task 1.2 Progress
+- All Terraform modules for Azure Landing Zone scaffolded:
+  - Resource Group, VNet (with subnets), Postgres, OpenAI (with Private Endpoint), Storage, Static Web App, Functions
+- Dev environment config created with placeholders (region: uksouth)
+- Infrastructure README added with setup instructions
+- All files committed to feature branch
+
+**Next:** Parameterize modules for production, test deployment, and document any issues or required Azure permissions.
+
+### Task 1.3 Progress
+- NextAuth.js API route with Azure AD OIDC provider scaffolded
+- Authentication middleware added to protect all app and API routes
+- .env.example created and README updated with setup instructions
+- All files committed to feature branch
+
+**Next:** Implement sign-in/out UI, session handling, and role-based access logic.
 
 ## Technical Specifications
 

@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
@@ -12,12 +9,14 @@ const nextConfig = {
     API_BASE_URL: process.env.API_BASE_URL,
   },
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.API_BASE_URL}/api/:path*`,
-      },
-    ];
+    return process.env.API_BASE_URL
+      ? [
+          {
+            source: '/api/:path*',
+            destination: `${process.env.API_BASE_URL}/api/:path*`,
+          },
+        ]
+      : [];
   },
 };
 
