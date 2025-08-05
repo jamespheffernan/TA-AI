@@ -18,3 +18,7 @@ variable "retention_in_days" {
   type        = number
   default     = 30
 }
+variable "functions_app_id" {
+  description = "Resource ID of the Azure Function App to monitor"
+  type        = string
+}

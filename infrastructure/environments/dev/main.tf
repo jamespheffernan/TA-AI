@@ -71,4 +71,5 @@ module "monitoring" {
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
   retention_in_days   = 30
+  functions_app_id    = module.functions.function_app_id
 }
