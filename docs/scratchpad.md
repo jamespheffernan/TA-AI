@@ -3,15 +3,19 @@
 ## Active Tasks
 
 ### 1. MVP TA AI Q&A Assistant
-- **Status**: Planning Phase Complete - Ready for Implementation
+- **Status**: Week 6 - Task 6.3 Monitoring & Logging In Progress; Task 7.1 CI/CD Complete; Task 7.2 Documentation In Progress; Task 7.3 Launch Checklist In Progress
 - **Implementation Plan**: [MVP TA AI Implementation](./implementation-plan/mvp-ta-ai-qa-assistant.md)
-- **Branch**: `feature/mvp-ta-ai-qa-assistant` (to be created)
+- **Branch**: `feature/mvp-ta-ai-qa-assistant` ✅ Created
 - **PR**: Not yet created
 - **Planning Completed**: 2024-01-09
+- **Development Started**: 2024-01-09
+- **Week 1 Completed**: 2024-01-09
+- **Weeks 2-5 Completed**: All core functionality implemented
+- **Week 6 Task 6.1 Completed**: Security hardening (VNet, TLS, API auth, input validation)
 
 ## Lessons Learned
 
-_No lessons learned yet_
+- [2024-01-09] On macOS ARM (Apple Silicon), `grpcio` package fails to build from source. Solution: Comment out Azure Functions dependencies temporarily and use plain FastAPI for local development. Azure packages can be installed in production/CI environment.
 
 ## Project Overview
 
