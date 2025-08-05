@@ -56,10 +56,17 @@ module "staticwebapp" {
 }
 
 module "functions" {
-  source = "../../modules/functions"
-  name   = "taai-dev-func"
-  location = module.resource_group.location
+  source              = "../../modules/functions"
+  name                = "taai-dev-func"
+  location            = module.resource_group.location
   resource_group_name = module.resource_group.name
-  vnet_subnet_id = module.vnet.functions_subnet_id
-  storage_account_name = module.storage.name
+  vnet_subnet_id      = module.vnet.functions_subnet_id
+  storage_account_name= module.storage.name
+}
+module "monitoring" {
+  source              = "../../modules/monitoring"
+  name                = "taai-dev-ai"
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  retention_in_days   = 30
 }
