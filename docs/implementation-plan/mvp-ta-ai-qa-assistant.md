@@ -173,11 +173,11 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 
 ### To Do
 - [ ] Task 6.2: Performance Testing
-- [ ] Task 7.2: Documentation
 - [ ] Task 7.3: Launch Checklist
 
 ### In Progress
 - [ ] Task 6.3: Monitoring & Logging
+- [ ] Task 7.2: Documentation
 
 ### Completed
 - [x] Task 1.1-1.4: Project Foundation ✅
