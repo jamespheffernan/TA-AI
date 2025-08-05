@@ -172,13 +172,12 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- [ ] Task 6.3: Monitoring & Logging
-- [ ] Task 7.1: Deployment Scripts
+- [ ] Task 6.2: Performance Testing
 - [ ] Task 7.2: Documentation
 - [ ] Task 7.3: Launch Checklist
 
 ### In Progress
-- [ ] Task 6.2: Performance Testing
+- [ ] Task 6.3: Monitoring & Logging
 
 ### Completed
 - [x] Task 1.1-1.4: Project Foundation ✅
@@ -187,6 +186,7 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 - [x] Task 4.1-4.3: User Interfaces ✅
 - [x] Task 5.1-5.3: Admin Controls ✅
 - [x] Task 6.1: Security Hardening ✅
+- [x] Task 7.1: Deployment Scripts ✅
 
 ### Blocked
 - [ ] Task 6.2: Performance Testing (query endpoint returns 404 locally)
