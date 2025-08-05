@@ -52,6 +52,20 @@ async def test_endpoint():
         "environment": os.getenv("ENVIRONMENT", "development")
     }
 
+# QA query endpoint
+from pydantic import BaseModel
+from services.qa_service import generate_answer
+
+class QueryRequest(BaseModel):
+    course_id: int
+    question: str
+
+@app.post("/api/query")
+async def query_endpoint(req: QueryRequest):
+    """Answer student question using QA service"""
+    result = generate_answer(question=req.question, course_id=req.course_id)
+    return result
+
 # This allows running with uvicorn directly
 if __name__ == "__main__":
     import uvicorn
