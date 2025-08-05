@@ -172,18 +172,56 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- (no pending tasks)
+- [ ] Task 6.2: Performance Testing
+- [ ] Task 6.3: Monitoring & Logging
+- [ ] Task 7.1: Deployment Scripts
+- [ ] Task 7.2: Documentation
+- [ ] Task 7.3: Launch Checklist
 
 ### In Progress
-- (no tasks in progress)
+- [ ] Task 6.2: Performance Testing
 
 ### Completed
-  - [x] Task 5.3: Admin Controls ✅
+- [x] Task 1.1-1.4: Project Foundation ✅
+- [x] Task 2.1-2.3: Core Data Layer ✅
+- [x] Task 3.1-3.3: AI Integration ✅
+- [x] Task 4.1-4.3: User Interfaces ✅
+- [x] Task 5.1-5.3: Admin Controls ✅
+- [x] Task 6.1: Security Hardening ✅
 
 ### Blocked
 _None yet_
 
 ## Executor's Feedback or Assistance Requests
+
+### Planning Analysis: What Can Be Done Without Azure Resources
+
+**Tasks We CAN Complete Without Azure:**
+1. **Performance Testing (6.2)** - Write load test scripts using locust/pytest
+2. **Monitoring Setup (6.3)** - Create monitoring configuration files and dashboards
+3. **GitHub Actions (7.1)** - Build complete CI/CD workflow (just won't deploy)
+4. **Documentation (7.2)** - Write all user guides, API docs, and setup instructions
+5. **Launch Checklist (7.3)** - Prepare comprehensive verification checklist
+
+**Tasks That REQUIRE Azure Resources:**
+1. Running actual load tests against Azure endpoints
+2. Deploying to Azure (needs subscription, resource group, credentials)
+3. Testing with real OpenAI API (needs API keys)
+4. SSO authentication flow (needs Azure AD tenant/app registration)
+5. Ingesting real course materials (needs OpenAI for embeddings)
+
+**Recommendation**: Continue with all non-Azure tasks first. This approach:
+- Maximizes progress without external dependencies
+- Creates a complete, deployment-ready codebase
+- Allows batching all Azure setup at the end
+- Minimizes context switching for the user
+
+**What You'll Need from Azure Eventually:**
+1. Azure subscription ID
+2. Azure AD tenant ID + app registration (client ID/secret)
+3. OpenAI API key (or Azure OpenAI endpoint/key)
+4. Resource group name and region preference
+5. Sample course materials (PDFs/PPTX) for testing
 
 ### Task 2.2 Completed ✅
 - PDF, PPTX, and text parsing functions implemented
