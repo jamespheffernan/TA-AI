@@ -62,6 +62,8 @@ module "functions" {
   resource_group_name = module.resource_group.name
   vnet_subnet_id      = module.vnet.functions_subnet_id
   storage_account_name= module.storage.name
+  app_insights_instrumentation_key = module.monitoring.instrumentation_key
+  app_insights_connection_string   = module.monitoring.connection_string
 }
 module "monitoring" {
   source              = "../../modules/monitoring"
