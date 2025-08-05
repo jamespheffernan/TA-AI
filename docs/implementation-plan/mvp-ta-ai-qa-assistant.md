@@ -172,7 +172,6 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 ## Project Status Board
 
 ### To Do
-- [ ] Task 6.2: Performance Testing
 - [ ] Task 6.3: Monitoring & Logging
 - [ ] Task 7.1: Deployment Scripts
 - [ ] Task 7.2: Documentation
@@ -190,7 +189,7 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 - [x] Task 6.1: Security Hardening ✅
 
 ### Blocked
-_None yet_
+- [ ] Task 6.2: Performance Testing (query endpoint returns 404 locally)
 
 ## Executor's Feedback or Assistance Requests
 
@@ -222,6 +221,11 @@ _None yet_
 3. OpenAI API key (or Azure OpenAI endpoint/key)
 4. Resource group name and region preference
 5. Sample course materials (PDFs/PPTX) for testing
+
+### Performance Testing Results
+- Health endpoint: 28 GET requests, 0 failures (avg ~3ms)
+- Query endpoint: 157 POST requests, 100% failures (404 Not Found)
+- **Next**: integrate local query endpoint or run Azure Functions emulator
 
 ### Task 2.2 Completed ✅
 - PDF, PPTX, and text parsing functions implemented
