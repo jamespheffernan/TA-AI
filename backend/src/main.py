@@ -54,7 +54,7 @@ async def test_endpoint():
 
 # QA query endpoint
 from pydantic import BaseModel
-from services.qa_service import generate_answer
+from src.services.qa_service import generate_answer
 
 class QueryRequest(BaseModel):
     course_id: int
