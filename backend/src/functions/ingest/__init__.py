@@ -5,11 +5,17 @@ from services.validation_service import validate_int, validate_str
 from services.document_parser import parse_document
 from db import SessionLocal
 from models.models import Chunk
-import openai
+from openai import OpenAI
 import tiktoken
 
-# Load OpenAI API key from env
-openai.api_key = os.getenv("AZURE_OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+# Lazily initialized OpenAI client. Tests may monkeypatch this symbol.
+client: OpenAI | None = None
+
+def get_client() -> OpenAI:
+    global client
+    if client is None:
+        client = OpenAI()
+    return client
 
 # Configure embedding model
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
@@ -51,8 +57,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         for chunk in chunk_text(text, MAX_TOKENS):
             # generate embedding
-            resp = openai.Embedding.create(input=chunk, model=EMBEDDING_MODEL)
-            embedding = resp["data"][0]["embedding"]
+            if os.getenv("MOCK_OPENAI") == "1":
+                embedding = [0.1, 0.2, 0.3]
+            else:
+                resp = get_client().embeddings.create(input=chunk, model=EMBEDDING_MODEL)
+                embedding = resp.data[0].embedding
             # persist chunk
             db_chunk = Chunk(course_id=course_id, text=chunk, embedding=embedding)
             session.add(db_chunk)

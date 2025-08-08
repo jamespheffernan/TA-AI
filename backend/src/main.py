@@ -1,11 +1,20 @@
 """
 Main FastAPI application for TA AI backend
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import time
+import uuid
+import json
+import logging
+from datetime import datetime, timezone
 from dotenv import load_dotenv
-from .db import engine, Base
+# Support running both as package (uvicorn src.main:app) and as script (python src/main.py)
+try:
+    from db import engine, Base  # when src/ is on sys.path
+except ImportError:  # pragma: no cover
+    from src.db import engine, Base  # fallback when launched as a package
 
 # Load environment variables
 load_dotenv()
@@ -31,6 +40,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class JsonFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        payload = {
+            "time": datetime.now(timezone.utc).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        for key in (
+            "request_id",
+            "request_path",
+            "request_method",
+            "status_code",
+            "duration_ms",
+            "client_host",
+            "user_agent",
+        ):
+            val = getattr(record, key, None)
+            if val is not None:
+                payload[key] = val
+        return json.dumps(payload, ensure_ascii=False)
+
+
+def setup_json_logging() -> None:
+    handler = logging.StreamHandler()
+    handler.setFormatter(JsonFormatter())
+    root = logging.getLogger()
+    root.handlers.clear()
+    root.addHandler(handler)
+    root.setLevel(logging.INFO)
+
 @app.on_event("startup")
 async def on_startup():
     # Import models to register metadata
@@ -38,6 +78,31 @@ async def on_startup():
     # Create database tables
     print("[Startup] Creating database tables...")
     Base.metadata.create_all(bind=engine)
+    setup_json_logging()
+
+
+@app.middleware("http")
+async def access_log_middleware(request: Request, call_next):
+    start = time.perf_counter()
+    request_id = str(uuid.uuid4())
+    try:
+        response = await call_next(request)
+        status = response.status_code
+        return response
+    finally:
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logging.getLogger("access").info(
+            "request",
+            extra={
+                "request_id": request_id,
+                "request_path": request.url.path,
+                "request_method": request.method,
+                "status_code": locals().get("status", 500),
+                "duration_ms": duration_ms,
+                "client_host": request.client.host if request.client else None,
+                "user_agent": request.headers.get("user-agent"),
+            },
+        )
 
 @app.get("/api/health")
 async def health_check():
@@ -54,7 +119,10 @@ async def test_endpoint():
 
 # QA query endpoint
 from pydantic import BaseModel
-from src.services.qa_service import generate_answer
+try:
+    from services.qa_service import generate_answer
+except ImportError:  # pragma: no cover
+    from src.services.qa_service import generate_answer
 
 class QueryRequest(BaseModel):
     course_id: int

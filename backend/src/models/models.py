@@ -1,8 +1,12 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from pgvector.sqlalchemy import Vector
+from sqlalchemy import JSON
 from datetime import datetime
-from src.db import Base
+try:
+    from db import Base
+except ImportError:  # pragma: no cover
+    from src.db import Base
 
 class Course(Base):
     __tablename__ = "courses"
@@ -29,7 +33,8 @@ class QuestionLog(Base):
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
-    citations = Column(ARRAY(Integer), nullable=True)
+    # Use ARRAY on Postgres, fallback to JSON when using SQLite for local dev
+    citations = Column(JSON, nullable=True)
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 class Feedback(Base):

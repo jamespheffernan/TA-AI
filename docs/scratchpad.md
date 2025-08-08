@@ -16,6 +16,7 @@
 ## Lessons Learned
 
 - [2024-01-09] On macOS ARM (Apple Silicon), `grpcio` package fails to build from source. Solution: Comment out Azure Functions dependencies temporarily and use plain FastAPI for local development. Azure packages can be installed in production/CI environment.
+- [2025-08-08] OpenAI Python SDK breaking change: legacy embeddings usage removed. Use client-based `embeddings.create` with explicit model (e.g., `text-embedding-3-small`) or temporarily pin `openai==0.28.*`. Update code and tests.
 
 ## Project Overview
 
@@ -39,3 +40,21 @@ Timeline: 6 weeks for one engineer + part-time professor tester
 3. **Security**: VNet with Private Endpoints to keep data within Azure
 4. **Cost Strategy**: Pay-per-use model, estimated $65/month (well under budget)
 5. **Development Approach**: 6-week sprint with weekly milestones, focusing on vertical slices 
+
+## Planner Update (2025-08-08)
+
+- Current focus: Production readiness. Embeddings API migration completed; query endpoint healthy locally; structured logging + request timing added; docs in progress.
+- Detailed next steps and subtasks updated in `docs/implementation-plan/mvp-ta-ai-qa-assistant.md` (Planner Update and status board).
+
+### Blockers
+- None for local mock baseline. Azure activation pending credentials.
+
+### Performance Testing Results (latest)
+- Health endpoint: 42 GET, 0 failures (p95 ~10ms)
+- Query endpoint: 222 POST, 0 failures (p95 ~10ms) — mock mode baseline
+- Action taken: Migrated to client-based embeddings; added mock mode, structured logging + timing; updated tests.
+
+### Prioritized Next Steps
+1) Document Azure Monitor/Grafana setup and add an OTel exporter stub.
+2) Complete deployment/ops/user docs; open a draft PR from `feature/mvp-ta-ai-qa-assistant` (tests green).
+3) Azure activation when credentials available; apply Terraform and smoke test.

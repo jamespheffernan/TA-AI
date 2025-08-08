@@ -1,13 +1,20 @@
 import os
-import openai
+from openai import OpenAI
 from typing import List, Dict
-from services.embedding_service import embed_query, retrieve_chunks
+try:
+    from services.embedding_service import embed_query, retrieve_chunks
+except ImportError:  # pragma: no cover
+    from src.services.embedding_service import embed_query, retrieve_chunks
 
 # Load Azure OpenAI configuration
-openai.api_key = os.getenv("AZURE_OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
-openai.api_type = os.getenv("OPENAI_API_TYPE", "azure")
-openai.api_base = os.getenv("AZURE_OPENAI_ENDPOINT", os.getenv("OPENAI_API_BASE"))
-openai.api_version = os.getenv("AZURE_OPENAI_API_VERSION", os.getenv("OPENAI_API_VERSION"))
+# Lazily initialized OpenAI client
+client: OpenAI | None = None
+
+def get_client() -> OpenAI:
+    global client
+    if client is None:
+        client = OpenAI()
+    return client
 
 # Models and defaults
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gpt-4-turbo")
@@ -39,13 +46,16 @@ def generate_answer(question: str, course_id: int, k: int = DEFAULT_K) -> Dict:
         {"role": "user", "content": f"Here are relevant snippets:\n{context}\n\nQuestion: {question}"},
     ]
 
-    # 4. Call ChatCompletion
-    response = openai.ChatCompletion.create(
-        model=CHAT_MODEL,
-        messages=messages,
-        temperature=0.2,
-    )
-    answer = response["choices"][0]["message"]["content"]
+    # 4. Call Chat Completions API (responses API if streaming desired)
+    if os.getenv("MOCK_OPENAI") == "1":
+        answer = "This is a mocked answer. [ID 1][ID 2]"
+    else:
+        response = get_client().chat.completions.create(
+            model=CHAT_MODEL,
+            messages=messages,
+            temperature=0.2,
+        )
+        answer = response.choices[0].message.content
 
     # 5. Return answer and citations
     citations: List[int] = [row["id"] for row in chunks]
