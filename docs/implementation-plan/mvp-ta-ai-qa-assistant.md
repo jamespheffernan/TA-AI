@@ -169,15 +169,68 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
     - Prepare professor training materials
     - **Success Criteria**: Complete documentation package
 
+## Planner Update (2025-08-08): Immediate Next Steps
+
+The remaining work focuses on unblocking performance testing, tightening observability, and finalizing launch documentation. The plan below prioritizes the simplest path to a shippable MVP.
+
+### Prioritized Vertical Slices
+
+1. Embeddings API migration (unblocks tests and local E2E)
+   - Update backend embedding calls to the current OpenAI Python SDK pattern (client-based `embeddings.create` with `text-embedding-3-small`). Alternatively, pin `openai==0.28.*` as a fallback.
+   - Adjust `backend/requirements.txt` accordingly.
+   - Add/adjust unit tests for the embedding service with mocks.
+   - Success criteria: Unit tests pass; ingestion and query paths can call embeddings without 4xx/5xx locally. ✅ Achieved (2025-08-08)
+
+2. Query endpoint health check and error handling
+   - Verify route wiring (`/api/query`) and ensure FastAPI returns 200 locally with mocked LLM/embeddings.
+   - Add request validation, guardrails, and structured error responses.
+   - Success criteria: Local POST `/api/query` returns 200 with a stubbed response and proper error handling for bad inputs. ✅ Achieved (2025-08-08)
+
+3. Performance testing baseline (local)
+   - Update `locustfile.py` to hit the correct path and payload.
+   - Run a local baseline with mocked external calls; target p95 < 1.5s and 0% 5xx.
+   - Success criteria: Locust report meets targets; findings documented. ✅ Achieved (2025-08-08)
+     - Result: 0% failures; p95 ~10ms (mocked), 222 POST requests over 15s @ 30 users.
+
+4. Monitoring and logging (production readiness)
+   - Add structured JSON logging and request timing middleware in backend.
+   - Expose counters/timers (OpenTelemetry-ready), document how to forward to Azure Monitor/Grafana later.
+   - Success criteria: Logs and timings visible locally; doc includes steps to enable in Azure. ✅ Partial (JSON structured logs + request timing middleware added)
+
+5. Documentation and launch checklist
+   - Complete deployment README, operations runbook, API docs, and professor user guide.
+   - Open a draft PR from `feature/mvp-ta-ai-qa-assistant`; ensure CI green.
+   - Success criteria: Docs reviewed, PR open as draft, all checklist items filled with current status.
+
+6. Azure activation (when credentials available)
+   - Gather subscription/tenant/app IDs and OpenAI key; parameterize Terraform vars.
+   - Plan/apply dev environment and smoke test end-to-end.
+   - Success criteria: Dev env live; chat works E2E against Azure resources.
+
+### Clarification on Monitoring task numbering
+
+In `docs/scratchpad.md`, "Task 6.3: Monitoring & Logging" is tracked as part of Production Readiness. In this implementation plan, Monitoring & Logging activities are covered under the Production Readiness scope (Tasks 6.1–6.3). We will keep the scratchpad label for continuity and map it here to the observability slice above.
+
 ## Project Status Board
 
 ### To Do
 - [ ] Task 6.2: Performance Testing
+  - [x] 6.2.a Migrate embedding API usage and update tests (2025-08-08)
+  - [x] 6.2.b Verify `/api/query` returns 200 locally with mocks (2025-08-08)
+  - [x] 6.2.c Update `locustfile.py` and run baseline (<1.5s p95) (2025-08-08)
 - [ ] Task 7.3: Launch Checklist
+  - [ ] Populate all preflight checks and owner sign-offs
 
 ### In Progress
-- [ ] Task 6.3: Monitoring & Logging
+- [ ] Task 6.3: Monitoring & Logging (observability slice under production readiness)
+  - [x] Add structured logging + request timing (2025-08-08)
+  - [x] Add optional OpenTelemetry exporter stub (ENABLE_OTEL=1) (2025-08-08)
+  - [ ] Document Azure Monitor/Grafana integration steps
 - [ ] Task 7.2: Documentation
+  - [ ] Deployment README
+  - [ ] Operations runbook
+  - [ ] API reference
+  - [ ] Professor user guide
 
 ### Completed
 - [x] Task 1.1-1.4: Project Foundation ✅
@@ -223,9 +276,9 @@ The goal is to build a cost-effective, privacy-first Q&A assistant for universit
 5. Sample course materials (PDFs/PPTX) for testing
 
 ### Performance Testing Results
-- Health endpoint: 28 GET requests, 0 failures (avg ~3ms)
-- Query endpoint: 157 POST requests, 100% failures (404 Not Found)
-- **Next**: integrate local query endpoint or run Azure Functions emulator
+- Health endpoint: 51 GET requests, 0 failures (avg ~4ms)
+- Query endpoint: 281 POST requests, 100% failures (500 Internal Server Error due to OpenAI Embedding API removal)
+- **Next**: migrate Embedding API to `openai.embeddings.create` or pin `openai==0.28` to restore functionality
 
 ### Task 2.2 Completed ✅
 - PDF, PPTX, and text parsing functions implemented

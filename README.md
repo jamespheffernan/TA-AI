@@ -76,7 +76,7 @@ cd ta-ai
 cd frontend
 npm install
 
-# Install backend dependencies
+# Install backend dependencies (use Python 3.11 for local dev)
 cd ../backend
 pip install -r requirements.txt
 
@@ -85,6 +85,13 @@ cd ../infrastructure
 terraform init
 terraform plan
 ```
+
+### Observability
+- JSON logs and request timing are enabled by default.
+- Optional tracing: set `ENABLE_OTEL=1`. Configure `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_SERVICE_NAME` as needed.
+
+### API Reference
+See `docs/api-reference.md` for endpoints and environment variables.
 
 ## Cost Estimation
 

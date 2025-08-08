@@ -20,7 +20,7 @@ This checklist ensures the TA AI Q&A Assistant meets all requirements before pro
 
 ## Performance & Monitoring
 - [ ] Load Test: Health and QA endpoints handle 200 concurrent users under thresholds
-- [ ] Monitoring: Application Insights receives logs and metrics from Functions
+- [ ] Monitoring: JSON logs ingested; OTEL traces exported to Azure Monitor/Grafana
 - [ ] Alerts: Error rate and latency alerts configured in Azure Monitor
 
 ## Cost Review
