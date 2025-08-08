@@ -55,6 +55,6 @@ Timeline: 6 weeks for one engineer + part-time professor tester
 - Action taken: Migrated to client-based embeddings; added mock mode, structured logging + timing; updated tests.
 
 ### Prioritized Next Steps
-1) Document Azure Monitor/Grafana setup and add an OTel exporter stub.
+1) Document Azure Monitor/Grafana setup; OTel exporter stub added (ENABLE_OTEL=1).
 2) Complete deployment/ops/user docs; open a draft PR from `feature/mvp-ta-ai-qa-assistant` (tests green).
 3) Azure activation when credentials available; apply Terraform and smoke test.

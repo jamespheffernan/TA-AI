@@ -224,6 +224,7 @@ In `docs/scratchpad.md`, "Task 6.3: Monitoring & Logging" is tracked as part of 
 ### In Progress
 - [ ] Task 6.3: Monitoring & Logging (observability slice under production readiness)
   - [x] Add structured logging + request timing (2025-08-08)
+  - [x] Add optional OpenTelemetry exporter stub (ENABLE_OTEL=1) (2025-08-08)
   - [ ] Document Azure Monitor/Grafana integration steps
 - [ ] Task 7.2: Documentation
   - [ ] Deployment README

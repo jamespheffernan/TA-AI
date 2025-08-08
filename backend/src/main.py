@@ -71,6 +71,31 @@ def setup_json_logging() -> None:
     root.addHandler(handler)
     root.setLevel(logging.INFO)
 
+
+def setup_opentelemetry_if_enabled() -> None:
+    if os.getenv("ENABLE_OTEL") != "1":
+        return
+    try:
+        # Lazy import; optional dependency
+        from opentelemetry import trace
+        from opentelemetry.sdk.resources import Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+        try:
+            from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+            otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+            exporter = OTLPSpanExporter(endpoint=otlp_endpoint) if otlp_endpoint else ConsoleSpanExporter()
+        except Exception:
+            exporter = ConsoleSpanExporter()
+
+        resource = Resource.create({"service.name": os.getenv("OTEL_SERVICE_NAME", "ta-ai-backend")})
+        provider = TracerProvider(resource=resource)
+        provider.add_span_processor(BatchSpanProcessor(exporter))
+        trace.set_tracer_provider(provider)
+        logging.getLogger("otel").info("OpenTelemetry tracing enabled")
+    except Exception as e:
+        logging.getLogger("otel").warning(f"OpenTelemetry not enabled: {e}")
+
 @app.on_event("startup")
 async def on_startup():
     # Import models to register metadata
@@ -79,17 +104,43 @@ async def on_startup():
     print("[Startup] Creating database tables...")
     Base.metadata.create_all(bind=engine)
     setup_json_logging()
+    setup_opentelemetry_if_enabled()
 
 
 @app.middleware("http")
 async def access_log_middleware(request: Request, call_next):
     start = time.perf_counter()
     request_id = str(uuid.uuid4())
+    status = 500
+    span_ctx = None
+    tracer = None
+    try:
+        # Optional span
+        try:
+            from opentelemetry import trace
+            tracer = trace.get_tracer(__name__)
+            span_ctx = tracer.start_as_current_span("http.request")
+            span_ctx.__enter__()
+        except Exception:
+            tracer = None
     try:
         response = await call_next(request)
         status = response.status_code
         return response
     finally:
+        if span_ctx is not None:
+            try:
+                span = trace.get_current_span()  # type: ignore[name-defined]
+                if span is not None:
+                    span.set_attribute("http.method", request.method)
+                    span.set_attribute("http.target", request.url.path)
+                    span.set_attribute("http.status_code", status)
+            except Exception:
+                pass
+            try:
+                span_ctx.__exit__(None, None, None)
+            except Exception:
+                pass
         duration_ms = int((time.perf_counter() - start) * 1000)
         logging.getLogger("access").info(
             "request",
